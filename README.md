@@ -1,7 +1,7 @@
 #\#FollowFriday
 
 ## Description
-A simple Applescript that helps you in creating a \#FollowFriday Twitter message. It removes the manual work of finding, copying, and pasting user names that you want to include in your Follow Friday tweet.
+A simple Applescript that helps you in creating a [\#FollowFriday](https://www.lifewire.com/a-guide-to-follow-friday-2655376) Twitter message. It removes the manual work of finding, copying, and pasting user names that you want to include in your Follow Friday tweet.
 
 ## What it does
 This script looks at your latest Twitter notifications and finds the users that meet one of the following criteria:
