@@ -35,5 +35,5 @@ This project is licensed under [GNU](https://en.wikipedia.org/wiki/GNU_General_P
 
 ## Author/Contact
 Nico Killips
-kernme.com/contact
+kern-me.com/contact
 
