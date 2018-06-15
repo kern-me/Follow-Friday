@@ -3,6 +3,9 @@
 ##############################################
 set AppleScript's text item delimiters to ","
 property fileName : "Follow Friday Message.txt"
+property newLine : "
+
+"
 
 ##############################################
 -- List Handler
@@ -89,20 +92,37 @@ end openFile
 ##############################################
 
 -- Get the follower handler from the DOM
-on getEngager(instance)
+on getNewFollowers(instance)
 	tell application "Safari"
 		
 		#1. Find the user profile links
 		#2. Use getAttribute to find the href content
 		#3. Remove the first character (/)
 		
-		set input to do JavaScript "document.getElementsByClassName('pretty-link js-user-profile-link')[" & instance & "].getAttribute('href').substr(1)" in document 1
+		set input to do JavaScript "document.querySelectorAll('.stream-item-follow .ActivityItem-facepileItem a')[" & instance & "].getAttribute('href').substr(1)" in document 1
+		
 		return input
 	end tell
-end getFollower
+end getNewFollowers
+
+on getRetweeters(instance)
+	tell application "Safari"
+		set input to do JavaScript "document.querySelectorAll('.stream-item-retweet .pretty-link')[" & instance & "].getAttribute('href').substr(1)" in document 1
+		
+		return input
+	end tell
+end getRetweeters
+
+on getFavoriters(instance)
+	tell application "Safari"
+		set input to do JavaScript "document.querySelectorAll('.stream-item-favorite .pretty-link')[" & instance & "].getAttribute('href').substr(1)" in document 1
+		
+		return input
+	end tell
+end getFavoriters
 
 -- Iterate over instances until none exist
-on iterateLoop(instance)
+on iterateLoop(instance, engagerSetting)
 	set theCount to instance
 	set theList to {}
 	set itemCounter to 0
@@ -111,21 +131,52 @@ on iterateLoop(instance)
 	repeat
 		set updatedCount to (theCount + 1)
 		
-		try
-			set rowData to getFollower(updatedCount)
+		if engagerSetting is 1 then
+			try
+				set rowData to getNewFollowers(updatedCount)
+				insertItemInList("@" & rowData, theList, 1)
+				set theCount to theCount + 1
+			on error
+				exit repeat
+			end try
 			
-			# Insert the "@" character to every list item
-			insertItemInList("@" & rowData, theList, 1)
+		else if engagerSetting is 2 then
+			try
+				set rowData to getRetweeters(updatedCount)
+				insertItemInList("@" & rowData, theList, 1)
+				set theCount to theCount + 1
+			on error
+				exit repeat
+			end try
 			
-			set theCount to theCount + 1
-			
-		on error
-			exit repeat
-		end try
+		else if engagerSetting is 3 then
+			try
+				set rowData to getFavoriters(updatedCount)
+				insertItemInList("@" & rowData, theList, 1)
+				set theCount to theCount + 1
+			on error
+				exit repeat
+			end try
+		end if
 	end repeat
 	
-	return the reverse of theList
+	return the reverse of theList as text
 end iterateLoop
 
 # Write to the file
-writeFile(iterateLoop(-1), false)
+on theRetweeters()
+	(writeFile(newLine & "My Retweeters!" & newLine & iterateLoop(-1, 2), false) & newLine as text)
+end theRetweeters
+
+on theFollowers()
+	(writeFile(newLine & "My New Followers!" & newLine & iterateLoop(-1, 1), false) & newLine as text)
+end theFollowers
+
+on theFavoriters()
+	(writeFile(newLine & "Recent Peeps Who Favorited!" & newLine & iterateLoop(-1, 3), false) & newLine as text)
+end theFavoriters
+
+######
+theRetweeters()
+theFollowers()
+theFavoriters()
