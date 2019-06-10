@@ -1,4 +1,4 @@
-#\#FollowFriday
+# FollowFriday
 
 ## Description
 A simple Applescript that helps you in creating a [\#FollowFriday](https://www.lifewire.com/a-guide-to-follow-friday-2655376) Twitter message. It removes the manual work of finding, copying, and pasting user names that you want to include in your Follow Friday tweet.
