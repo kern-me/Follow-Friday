@@ -4,10 +4,7 @@
 A simple Applescript that helps you in creating a [\#FollowFriday](https://www.lifewire.com/a-guide-to-follow-friday-2655376) Twitter message. It removes the manual work of finding, copying, and pasting user names that you want to include in your Follow Friday tweet.
 
 ## What it does
-This script looks at your latest Twitter notifications and finds the users that meet one of the following criteria:
-- Recently Followed You
-- Liked one of your tweets
-- Have tweeted something that you have recently liked
+This script looks at your latest Twitter notifications and finds the users that have recently interacted with you directly, or a tweet in which you were mentioned.
 
 The user names that have met the above criteria are extracted to a list, separated by commas, and are then pasted into a new .txt file on your desktop (look for "Follow Friday Message.txt")
 
