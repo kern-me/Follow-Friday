@@ -3,9 +3,7 @@
 ##############################################
 set AppleScript's text item delimiters to ","
 property fileName : "Follow Friday Message.txt"
-property newLine : "
-
-"
+property newLine : "\n\n"
 
 ##############################################
 -- List Handler
@@ -72,7 +70,6 @@ on writeTextToFile(theText, theFile, overwriteExistingContent)
 	end try
 end writeTextToFile
 
-
 -- Write to file
 on writeFile(theContent, writable)
 	set this_Story to theContent
@@ -91,92 +88,41 @@ end openFile
 -- Interact with the DOM
 ##############################################
 
--- Get the follower handler from the DOM
-on getNewFollowers(instance)
+-- Get Recently Interacted User
+on getUser(instance)
 	tell application "Safari"
+		set theInput to do JavaScript "document.querySelectorAll('article > div > div + div a div + div span')[" & instance & "].innerText" in document 1
 		
-		#1. Find the user profile links
-		#2. Use getAttribute to find the href content
-		#3. Remove the first character (/)
-		
-		set input to do JavaScript "document.querySelectorAll('.stream-item-follow .ActivityItem-facepileItem a')[" & instance & "].getAttribute('href').substr(1)" in document 1
-		
-		return input
+		return theInput
 	end tell
-end getNewFollowers
+end getUser
 
-on getRetweeters(instance)
-	tell application "Safari"
-		set input to do JavaScript "document.querySelectorAll('.stream-item-retweet .pretty-link')[" & instance & "].getAttribute('href').substr(1)" in document 1
-		
-		return input
-	end tell
-end getRetweeters
-
-on getFavoriters(instance)
-	tell application "Safari"
-		set input to do JavaScript "document.querySelectorAll('.stream-item-favorite .pretty-link')[" & instance & "].getAttribute('href').substr(1)" in document 1
-		
-		return input
-	end tell
-end getFavoriters
-
--- Iterate over instances until none exist
-on iterateLoop(instance, engagerSetting)
+on iterateLoop(instance)
 	set theCount to instance
 	set theList to {}
-	set itemCounter to 0
 	set AppleScript's text item delimiters to ", "
 	
 	repeat
 		set updatedCount to (theCount + 1)
-		
-		if engagerSetting is 1 then
-			try
-				set rowData to getNewFollowers(updatedCount)
-				insertItemInList("@" & rowData, theList, 1)
-				set theCount to theCount + 1
-			on error
-				exit repeat
-			end try
-			
-		else if engagerSetting is 2 then
-			try
-				set rowData to getRetweeters(updatedCount)
-				insertItemInList("@" & rowData, theList, 1)
-				set theCount to theCount + 1
-			on error
-				exit repeat
-			end try
-			
-		else if engagerSetting is 3 then
-			try
-				set rowData to getFavoriters(updatedCount)
-				insertItemInList("@" & rowData, theList, 1)
-				set theCount to theCount + 1
-			on error
-				exit repeat
-			end try
-		end if
+		try
+			set rowData to getUser(updatedCount)
+			if theList does not contain rowData then
+				insertItemInList(rowData, theList, 1)
+			end if
+			set theCount to theCount + 1
+		on error
+			exit repeat
+		end try
 	end repeat
 	
 	return the reverse of theList as text
 end iterateLoop
 
 # Write to the file
-on theRetweeters()
-	(writeFile(newLine & "My Retweeters!" & newLine & iterateLoop(-1, 2), false) & newLine as text)
-end theRetweeters
-
-on theFollowers()
-	(writeFile(newLine & "My New Followers!" & newLine & iterateLoop(-1, 1), false) & newLine as text)
-end theFollowers
-
-on theFavoriters()
-	(writeFile(newLine & "Recent Peeps Who Favorited!" & newLine & iterateLoop(-1, 3), false) & newLine as text)
-end theFavoriters
+on followFriday()
+	set userNames to iterateLoop(-1) as text
+	writeFile("Follow these awesome folks!" & newLine & iterateLoop(-1), false)
+end followFriday
 
 ######
-theRetweeters()
-theFollowers()
-theFavoriters()
+followFriday()
