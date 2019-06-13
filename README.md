@@ -31,6 +31,5 @@ I'm working to make this a little more turn-key. On the horizon are customizatio
 This project is licensed under [GNU](https://en.wikipedia.org/wiki/GNU_General_Public_License)
 
 ## Author/Contact
-Nico Killips
-kern-me.com/contact
+Nico Killips - [kern-me.com](https://kern-me.com/contact)
 
